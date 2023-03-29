@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Koibumi settings</title>
+    <meta charset="UTF-8">
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Koibumi settings</h1>
+    <form id="settings-form">
+      <label for="interval">Love letter interval (minutes):</label> <br>
+      <input type="number" id="interval" name="interval" min="1"> <br> <br>
+      <label for="openaiKey">OpenAI key:</label> <br>
+      <input type="text" id="openaiKey" name="openaiKey" placeholder="sk-..."> <br> <br>
+      <label for="yourName">Your name:</label>
+      <br>
+      <input type="text" id="yourName" name="yourName"> <br> <br>
+      <label for="characterName">Character name:</label> <br>
+      <input type="text" id="characterName" name="characterName"> <br> <br>
+      <label for="topics">Topics (comma-separated):</label> <br>
+      <textarea id="topics" name="topics" style="width: 350px; height: 60px"></textarea> <br> <br>
+      <label for="moods">Moods (comma-separated):</label> <br>
+      <textarea id="moods" name="moods" style="width: 350px; height: 60px"></textarea> <br> <br>
+      <label for="characterDescription">Character description:</label> <br>
+      <textarea id="characterDescription" name="characterDescription" style="width: 350px; height: 300px"></textarea> <br> <br>
+      <button type="submit">Save</button>
+    </form>
+    <script src="options.js"></script>
+  </body>
+</html>

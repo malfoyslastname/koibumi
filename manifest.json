@@ -1,0 +1,18 @@
+{
+  "manifest_version":2,
+  "version":"1.0",
+  "name":"Koibumi",
+  "description": "Get love letters from your waifu directly in your browser",
+  "permissions": ["tabs", "activeTab", "storage"],
+  "background": {
+   "scripts":["background.js"],
+   "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "options_page": "options.html"
+}
