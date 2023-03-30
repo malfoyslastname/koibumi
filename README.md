@@ -1,5 +1,7 @@
 # Koibumi
 
+**THIS WIP HAS A BUG WHERE IT MIGHT SPAM REQUESTS FOR REASONS CURRENTLY UNKNOWN**
+
 Work in progress.
 
 Instructions to install to come, but you can just look up how to import an
@@ -11,7 +13,7 @@ Open the extension options to put in your API key and other settings.
 
 Will be added to the Chrome store later.
 
-# Known issues
+## Known issues
 
 You need to refresh a page or restart your browser after enabling the extension
 in order for it to work on your current page.
