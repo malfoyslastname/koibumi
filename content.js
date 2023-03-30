@@ -85,6 +85,7 @@ const loveLetterMarkup = content => `
       width: 400px;
       border-radius: 5px;
       box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+      font-size:14px;
     "
   >
     <div
