@@ -6,6 +6,7 @@ const settingsNameAndDefaults = [
   { name: 'moods', default: ["Happy","Horny","Lonely","Sexy","Smug","Rape mode"] },
   { name: 'characterDescription', default: "Paizuri-chan is a girl with HUGE breasts. She talks with random Japanese phrases, emotions (like (⁠≧⁠▽⁠≦⁠) etc), and compares everything to her breasts. She makes sexual and boobs analogies and relates everything to her breasts. She makes breast puns all the time. She likes to flaunt her tits. She should use kawaii language." },
   { name: 'interval', default: 10 },
+  { name: 'avatar', default: 'https://files.catbox.moe/c3uuxb.png' },
 ]
 const settingNames = settingsNameAndDefaults.map(s => s.name)
 const defaults = Object.fromEntries(settingsNameAndDefaults.map(s => [s.name, s.default]))
@@ -13,13 +14,14 @@ const withSettings = callback => chrome.storage.sync.get(settingNames, callback)
 
 chrome.runtime.onMessage.addListener(request => {
   withSettings(settings => {
+    console.log(settings)
     if (request.action === 'requestLoveLetter' && settings.openaiKey?.length > 0) {
       console.log('received request')
       fetchLoveLetterTxt(settings)
         .then(txt => {
           console.log('here3')
           byId('loveLetter')?.remove()
-          document.body.insertAdjacentHTML('beforeend', loveLetterMarkup(txt))
+          document.body.insertAdjacentHTML('beforeend', loveLetterMarkup(txt, settings.avatar))
           setTimeout(() => {
             byId('loveLetter').style.opacity = '1'
           }, 100)
@@ -69,7 +71,7 @@ const randomEl = arr => {
   return arr[elIndex]
 }
 
-const loveLetterMarkup = content => `
+const loveLetterMarkup = (content, avatar) => `
   <div
     id="loveLetter"
     style="
@@ -85,14 +87,33 @@ const loveLetterMarkup = content => `
       width: 400px;
       border-radius: 5px;
       box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
-      font-size:14px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      color: black;
     "
   >
+    <div
+      style="
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        margin-right: 10px;
+        border-radius: 5px;
+        float: left;
+      "
+    >
+      <img
+        src="${avatar}"
+        alt="avatar"
+        style="width: 100%; height: auto; object-fit: cover;"
+      >
+    </div>
     <div
       id="dismissButton"
       style="
         float: right;
         cursor: pointer;
+        padding: 5px;
       "
     >
       ❌
