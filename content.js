@@ -1,43 +1,26 @@
-const settingsNameAndDefaults = [
-  { name: 'openaiKey', default: "" },
-  { name: 'yourName', default: "Anon" },
-  { name: 'characterName', default: "Paizuri-chan" },
-  { name: 'topics', default: ["Boobs","Breasts","Titfuck","Groping","Nipples","Lactation"] },
-  { name: 'moods', default: ["Happy","Horny","Lonely","Sexy","Smug","Rape mode"] },
-  { name: 'characterDescription', default: "Paizuri-chan is a girl with HUGE breasts. She talks with random Japanese phrases, emotions (like (⁠≧⁠▽⁠≦⁠) etc), and compares everything to her breasts. She makes sexual and boobs analogies and relates everything to her breasts. She makes breast puns all the time. She likes to flaunt her tits. She should use kawaii language." },
-  { name: 'interval', default: 10 },
-  { name: 'avatar', default: 'https://files.catbox.moe/c3uuxb.png' },
-]
-const settingNames = settingsNameAndDefaults.map(s => s.name)
-const defaults = Object.fromEntries(settingsNameAndDefaults.map(s => [s.name, s.default]))
-const withSettings = callback => chrome.storage.sync.get(settingNames, callback)
+const byId = id => document.getElementById(id)
+const randomEl = arr => arr[Math.floor(Math.random() * arr.length)]
 
 chrome.runtime.onMessage.addListener(request => {
-  withSettings(settings => {
-    console.log(settings)
+  ;(async () => {
+    console.log('request received')
+    const shared = await import(chrome.runtime.getURL("shared.js"))
+    const settings = await shared.getSettings()
     if (request.action === 'requestLoveLetter' && settings.openaiKey?.length > 0) {
-      console.log('received request')
-      fetchLoveLetterTxt(settings)
-        .then(txt => {
-          console.log('here3')
-          byId('loveLetter')?.remove()
-          document.body.insertAdjacentHTML('beforeend', loveLetterMarkup(txt, settings.avatar))
-          setTimeout(() => {
-            byId('loveLetter').style.opacity = '1'
-          }, 100)
-          byId('dismissButton').addEventListener('click', () => {
-            byId('loveLetter').remove()
-          })
-        })
+      console.log('confirmed request is for a love letter')
+      const txt = await fetchLoveLetterTxt(settings)
+      byId('loveLetter')?.remove()
+      document.body.insertAdjacentHTML('beforeend', loveLetterMarkup(txt, settings.avatar))
+      setTimeout(() => { byId('loveLetter').style.opacity = '1' }, 100)
+      byId('dismissButton').addEventListener('click', () => byId('loveLetter').remove())
     }
-
-  })
+  })()
 })
 
-const fetchLoveLetterTxt = settings => {
+const fetchLoveLetterTxt = async settings => {
   const mood = randomEl(settings.moods)
   const topic = randomEl(settings.topics)
-  return fetch("https://api.openai.com/v1/chat/completions", {
+  const resp = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "authorization": `Bearer ${settings.openaiKey}`,
       "content-type": "application/json",
@@ -60,15 +43,8 @@ const fetchLoveLetterTxt = settings => {
       stream: false,
     }),
   })
-    .then(r => r.json())
-    .then(j => j.choices[0].message.content)
-}
-
-const byId = id => document.getElementById(id)
-
-const randomEl = arr => {
-  const elIndex = Math.floor(Math.random() * arr.length)
-  return arr[elIndex]
+  const json = await resp.json()
+  return json.choices[0].message.content
 }
 
 const loveLetterMarkup = (content, avatar) => `
@@ -92,34 +68,45 @@ const loveLetterMarkup = (content, avatar) => `
       color: black;
     "
   >
-    <div
-      style="
-        width: 50px;
-        height: 50px;
-        overflow: hidden;
-        margin-right: 10px;
-        border-radius: 5px;
-        float: left;
-      "
-    >
-      <img
-        src="${avatar}"
-        alt="avatar"
-        style="width: 100%; height: auto; object-fit: cover;"
+    ${closeBtn}
+    ${singleMsg(avatar, content)}
+  </div>
+`
+
+const closeBtn = `
+  <div
+    id="dismissButton"
+    style="
+      float: right;
+      cursor: pointer;
+      padding: 5px;
+    "
+  >
+    ❌
+  </div>
+`
+
+const singleMsg = (avatarUrl, msgTxt) => `
+  <div style="display: flex;">
+    <div style="flex: 0 0 auto;">
+      <div
+        style="
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          margin-right: 10px;
+          border-radius: 5px;
+        "
       >
+        <img
+          src="${avatarUrl}"
+          alt="avatar"
+          style="width: 100%; height: auto; object-fit: cover;"
+        >
+      </div>
     </div>
-    <div
-      id="dismissButton"
-      style="
-        float: right;
-        cursor: pointer;
-        padding: 5px;
-      "
-    >
-      ❌
-    </div>
-    <div>
-      ${content}
+    <div style="flex: 1;">
+      ${msgTxt}
     </div>
   </div>
 `

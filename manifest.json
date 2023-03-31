@@ -14,5 +14,8 @@
       "js": ["content.js"]
     }
   ],
+  "web_accessible_resources": [
+     "shared.js"
+  ],
   "options_page": "options.html"
 }
