@@ -31,7 +31,7 @@ const fetchLoveLetterTxt = async settings => {
         {
           role: 'user',
           content:
-            `Take on the role of ${settings.characterName} and write a text message in character to ${settings.yourName}. The mood in the message should be ${mood}, and talk about ${topic}. It should be short, 2-3 lines. Do not include quotation marks. ${settings.characterDescription}\n\n`
+            `Take on the role of ${settings.characterName} and write a text message in character to ${settings.yourName}.\n\n${settings.characterDescription}\n\nThe mood in the message should be ${mood}, and talk about ${topic}. It should be short, 2-3 lines. Do not include quotation marks.\n\n`
         }
       ],
       temperature: 0.9,
