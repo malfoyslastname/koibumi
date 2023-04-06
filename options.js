@@ -17,11 +17,11 @@ const onSaveSettings = async event => {
   const { defaults, settingNames } = await import(chrome.runtime.getURL("shared.js"))
   const stringEntry = settingName => byId(settingName).value || defaults[settingName]
   const numEntry = settingName => parseInt(byId(settingName).value ?? defaults[settingName], 10)
-  const stringArrEntry = settingName => byId(settingName).value || defaults[settingName]
+  const stringArrEntry = settingName => byId(settingName).value.split(',') || defaults[settingName]
   const newSettings = Object.fromEntries(
     settingNames.map(name => [
       name,
-      Array.isArray(byId(name).value)
+      ['topics', 'moods'].includes(name)
         ? stringArrEntry(name)
         : isNaN(byId(name).value)
         ? stringEntry(name)
